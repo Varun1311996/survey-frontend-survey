@@ -1,8 +1,7 @@
 <template>
-  <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href="/" class="navbar-brand">Survey App</a>
-      <div class="navbar-nav mr-auto">
+    <nav class="navbar navbar-expand bgHeader">
+      <a href="/" class="navbar-brand bgTitle">Survey App</a>
+      <div class="navbar-nav mr-auto menuOptions">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
             <font-awesome-icon icon="home" /> Home
@@ -12,10 +11,13 @@
           <router-link to="/admin" class="nav-link">Admin Board</router-link>
         </li>
         <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/mod" class="nav-link">Moderator Board</router-link>
+          <router-link to="/user" class="nav-link">User Board</router-link>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+        </li> -->
+         <li class="nav-item">
+          <router-link v-if="currentUser" to="/survey" class="nav-link">Surveys</router-link>
         </li>
       </div>
 
@@ -48,11 +50,6 @@
         </li>
       </div>
     </nav>
-
-    <div class="container">
-      <router-view />
-    </div>
-  </div>
 </template>
 
 <script>
@@ -70,7 +67,7 @@ export default {
     },
     showModeratorBoard() {
       if (this.currentUser && this.currentUser['roles']) {
-        return this.currentUser['roles'].includes('ROLE_MODERATOR');
+        return this.currentUser['roles'].includes('ROLE_USER');
       }
 
       return false;
@@ -80,7 +77,33 @@ export default {
     logOut() {
       this.$store.dispatch('auth/logout');
       this.$router.push('/login');
+      console.log("ddd",document.body)
+
+      document.body.style.backgroundColor = "#AA0000 !important";
     }
   }
 };
 </script>
+
+<style>
+.bgHeader
+{
+  background-color: #043b87;
+  color:white;
+  padding: 1.5rem !important;
+}
+
+.bgHeader a{
+  color:white !important;
+}
+
+.bgTitle{
+  font-size: 2rem !important;
+  font-weight: 600 !important;
+}
+
+.menuOptions{
+  font-size: 1rem !important;
+
+}
+</style>
