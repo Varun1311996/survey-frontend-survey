@@ -1,16 +1,13 @@
 <template>
   <div class="container">
-   <h1>{{survey.title}}</h1>
+   <h3 class="text-center text-bold">{{survey.title}}</h3>
    <div v-for="(question, index) in survey.data" :key="index" class="quest-block">
     
       <div class="card read-only-question cursor_grab">
         <div class="row">
           <div class="p-0 " style="width:100%;">
             <div class="question-section">
-              <p class="question_color">Question
-                <span class="">{{ index + 1 }}:</span>
-              </p>
-              <p class="question_body">{{question.body}}</p>
+              <p class="question_body">{{ index + 1 }}: {{question.body}}</p>
             </div>
             <div class="answer-section">
               <div class="option-section" v-if="question.type === 'BOOLEAN'">
@@ -25,7 +22,7 @@
                 <!-- <vueSlider ref="slider" :data="question.labels" :value="question.minValue" :piecewise="true" direction="horizontal" class="horizontal-vue-slider" :min="question.minValue" :max="question.maxValue" :piecewiseLabel="true"></vueSlider> -->
               </div>
               <div class="option-section" v-if="question.type === 'TEXT'">
-                <input type="text" class="input-text readonly" placeholder="" :readonly="readOnly" />
+                <input type="text" :name="index" v-model="responses[index + 1]" class="input-text readonly" placeholder="" :readonly="readOnly" />
               </div>
               <div class="option-section" v-if="question.type === 'DATE'">
                 <div class="p-0">
@@ -69,13 +66,14 @@
         </div>
       </div>
     </div>
-    <button type="button" class="btn btn-success btn-sm mt-3">Submit</button>
+    <button type="button" class="btn btn-success btn-sm mt-3" @click="submitSurvey()">Submit</button>
   </div>
 </template>
 
 <script>
 import Survey from "../../services/survey";
 import EventBus from '../../event.js';
+import SurveyResponse from "../../services/survey-responses";
 
 
 export default {
@@ -83,7 +81,8 @@ export default {
   data() {
     return {
       selectedQuestion: { id: null },
-      survey:{}
+      survey:{},
+       responses: [],
     };
   },
   props: ['id'],
@@ -106,6 +105,16 @@ export default {
           this.survey = response.data;
           console.log("this surveyyyyy..", response.data);
         })
+    },
+    submitSurvey() {
+      console.log("add to list", this.responses);
+      
+       SurveyResponse.create(this.survey.title,this.$store.state.auth.user.id,this.id,this.responses)
+        .then(response => {
+          console.log(response.data)
+           this.$router.push('/survey/submit');
+        })
+      
     }
    
   },
