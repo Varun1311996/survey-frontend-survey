@@ -24,7 +24,7 @@
           </button>
         </div>
 
-        <div class="login-choice"><span>or Sign In with</span></div>
+        <!-- <div class="login-choice"><span>or Sign In with</span></div> -->
       <SocialLogin />
 
         <div class="form-group">

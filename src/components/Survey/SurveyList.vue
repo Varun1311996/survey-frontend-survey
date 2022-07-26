@@ -8,13 +8,27 @@
       <thead>
         <tr>
           <th class="col-3">Survey Name</th>
+          <th class="col-3">Created By</th>
           <th></th>
         </tr>
       </thead>
       <tbody v-for="survey in surveys" :key="survey.id" :survey="survey">
-        <tr>
+        <tr v-if="isAdmin" >
 
           <td>{{ survey.title }}</td>
+          <td>{{ survey.userId }}</td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm mr-3" @click="view(survey)">View</button>
+            <button type="button" class="btn btn-secondary btn-sm mr-3" @click="edit(survey)">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm mr-3" @click="deletesurvey(survey)">Delete</button>
+            <button type="button" class="btn btn-info btn-sm" @click="share(survey)">Share</button>
+          </td>
+
+        </tr>
+        <tr v-else-if="loggedUser.id == survey.userId" >
+
+          <td>{{ survey.title }}</td>
+          <td>{{ survey.userId }}</td>
           <td>
             <button type="button" class="btn btn-primary btn-sm mr-3" @click="view(survey)">View</button>
             <button type="button" class="btn btn-secondary btn-sm mr-3" @click="edit(survey)">Edit</button>
@@ -45,6 +59,15 @@ export default {
     }
   },
   components: { AppHeader },
+  computed: {
+    loggedUser() {
+      return this.$store.state.auth.user;
+    },
+  isAdmin() {
+      var user =  this.$store.state.auth.user;
+      return user.roles.includes("ROLE_ADMIN");
+    }
+  },
   mounted() {
     this.getAllSurveys();
   },
@@ -59,22 +82,22 @@ export default {
           console.log("survey1111..", response.data);
         })
     },
-    view(survey){
-this.$router.push({ name: 'viewsurvey', params: { id: survey.id } });
+    view(survey) {
+      this.$router.push({ name: 'viewsurvey', params: { id: survey.id } });
     },
-    edit(survey){
-this.$router.push({ name: 'editsurvey', params: { id: survey.id } });
+    edit(survey) {
+      this.$router.push({ name: 'editsurvey', params: { id: survey.id } });
     },
-    deletesurvey(survey){
-       Survey.delete(survey.id)
+    deletesurvey(survey) {
+      Survey.delete(survey.id)
         .then(() => {
-           this.getAllSurveys();
+          this.getAllSurveys();
         })
         .catch(e => {
           this.message = e.response.data.message;
         });
     },
-    share(survey){
+    share(survey) {
       this.$router.push({ name: 'sharesurvey', params: { id: survey.id } });
     }
   }
