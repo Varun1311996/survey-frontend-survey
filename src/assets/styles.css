@@ -3,6 +3,11 @@ body {
     font-size: 14px;
     background: #043b87;
 }
+
+.container{
+    border-radius: 15px;
+    padding: 10px 20px 5% 20px;
+}
 /* Style the tab */
 .tab {
     overflow: hidden;
