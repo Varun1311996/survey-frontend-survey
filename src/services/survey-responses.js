@@ -1,7 +1,7 @@
 import http from "../../http-common";
 class SurveyResponse {
-    getAll(){
-        return http.get("/surveys");
+  getAllResults(){
+        return http.get('/surveys/responses/0/getAllResponses');
       }
     
       create(name,userId,id, data) {
