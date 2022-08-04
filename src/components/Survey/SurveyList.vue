@@ -10,30 +10,42 @@
           <th class="col-3">Survey Name</th>
           <th class="col-3">Created By</th>
           <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody v-for="survey in surveys" :key="survey.id" :survey="survey">
         <tr v-if="isAdmin" >
 
           <td>{{ survey.title }}</td>
-          <td>{{ survey.userId }}</td>
+          <td>{{ survey.username }}</td>
           <td>
             <button type="button" class="btn btn-primary btn-sm mr-3" @click="view(survey)">View</button>
             <button type="button" class="btn btn-secondary btn-sm mr-3" @click="edit(survey)">Edit</button>
             <button type="button" class="btn btn-danger btn-sm mr-3" @click="deletesurvey(survey)">Delete</button>
             <button type="button" class="btn btn-info btn-sm" @click="share(survey)">Share</button>
           </td>
+          <td>
+             <router-link :to="{ name: 'survey-results', params: {id: survey.id } }" class="nav-link">
+             Results
+          </router-link>
+          </td>
+           
 
         </tr>
         <tr v-else-if="loggedUser.id == survey.userId" >
 
           <td>{{ survey.title }}</td>
-          <td>{{ survey.userId }}</td>
+          <td>{{ survey.username }}</td>
           <td>
             <button type="button" class="btn btn-primary btn-sm mr-3" @click="view(survey)">View</button>
             <button type="button" class="btn btn-secondary btn-sm mr-3" @click="edit(survey)">Edit</button>
             <button type="button" class="btn btn-danger btn-sm mr-3" @click="deletesurvey(survey)">Delete</button>
             <button type="button" class="btn btn-info btn-sm" @click="share(survey)">Share</button>
+          </td>
+          <td>
+            <router-link :to="{ name: 'survey-results', params: {id: survey.id } }" class="nav-link">
+             Results
+          </router-link>
           </td>
 
         </tr>
@@ -83,7 +95,12 @@ export default {
         })
     },
     view(survey) {
-      this.$router.push({ name: 'viewsurvey', params: { id: survey.id } });
+      // this.$router.push({ name: 'viewsurvey', params: { id: survey.id } });
+      const routeData = this.$router.resolve({
+        name: "viewsurvey",
+        params: { id: survey.id }
+      });
+      window.open(routeData.href, "_blank");
     },
     edit(survey) {
       this.$router.push({ name: 'editsurvey', params: { id: survey.id } });

@@ -1,49 +1,57 @@
 <template>
   <div class="container">
-   <h3 class="text-center text-bold">{{survey.title}}</h3>
-   <div v-for="(question, index) in survey.data" :key="index" class="quest-block">
-    
+    <h3 class="text-center text-white text-bold">{{ survey.title }}</h3>
+    <div v-for="(question, index) in survey.data" :key="index" class="quest-block">
+
       <div class="card read-only-question cursor_grab">
         <div class="row">
           <div class="p-0 " style="width:100%;">
             <div class="question-section">
-              <p class="question_body">{{ index + 1 }}: {{question.body}}</p>
+              <p class="question_body">{{ index + 1 }}: {{ question.body }}</p>
             </div>
             <div class="answer-section">
+              <div class="option-section" v-if="question.type === 'TEXT'">
+                <input type="text" :name="index"
+                  v-model="responses[`${index + 1} ~ ${question.type} ~ ${question.body} `]" class="input-text readonly"
+                  placeholder="" :readonly="readOnly" />
+              </div>
               <div class="option-section" v-if="question.type === 'BOOLEAN'">
-                <div class="" v-for='(option, index) in question.options' :key="index">
+                <div class="" v-for='(option, i) in question.options' :key="i">
                   <p class="radio-option">
-                    <input type="radio" name="boolean_type" :disabled="readOnly">
-                    <label>{{option.body}}</label>
+                    <input type="radio" :name="option.body"
+                      v-model="responses[`${index + 1} ~ ${question.type} ~ ${question.body}  ~ ${option.body} `]">
+                    <label>{{ option.body }}</label>
                   </p>
                 </div>
               </div>
               <div class="option-section pad-top20" v-if="question.type === 'SCALE'">
                 <!-- <vueSlider ref="slider" :data="question.labels" :value="question.minValue" :piecewise="true" direction="horizontal" class="horizontal-vue-slider" :min="question.minValue" :max="question.maxValue" :piecewiseLabel="true"></vueSlider> -->
               </div>
-              <div class="option-section" v-if="question.type === 'TEXT'">
-                <input type="text" :name="index" v-model="responses[index + 1]" class="input-text readonly" placeholder="" :readonly="readOnly" />
-              </div>
+
               <div class="option-section" v-if="question.type === 'DATE'">
                 <div class="p-0">
-                  <input type="text" class="input-text readonly" placeholder="" v-model="question.dateFormat" :readonly="readOnly">
+                  <input type="text" class="input-text readonly" placeholder="" v-model="question.dateFormat"
+                    :readonly="readOnly">
                 </div>
               </div>
               <div class="option-section" v-if="question.type === 'TIME'">
                 <div class="p-0">
-                  <input type="text" class="input-text readonly" placeholder="" :value="question.timeFormat === '12' ? 'HH:MM AM/PM':'HH:MM'" :readonly="readOnly">
+                  <input type="text" class="input-text readonly" placeholder=""
+                    :value="question.timeFormat === '12' ? 'HH:MM AM/PM' : 'HH:MM'" :readonly="readOnly">
                 </div>
               </div>
               <div class="option-section" v-if="question.type === 'NUMBER'">
                 <div class="">
                   <input type="text" class="input-text readonly width-90" placeholder="" :readonly="readOnly">
-                  <span v-if="question.hasUnits">{{question.units}}</span>
+                  <span v-if="question.hasUnits">{{ question.units }}</span>
                 </div>
               </div>
               <div class="option-section" v-if="question.type === 'SINGLE_CHOICE'">
-                <div v-for='(option, index) in question.options' :key="index">
+                <div v-for='(option, i) in question.options' :key="i">
                   <label>
-                    <input type="radio" name="single" :disabled="readOnly">&nbsp;{{option.body}}
+                    <input type="radio" name="single"
+                      v-model="responses[`${index + 1} ~ ${question.type} ~ ${question.body} ~${option.body} `]"
+                      :disabled="readOnly">&nbsp;{{ option.body }}
                   </label>
                   <div class="" v-if="option.imageUrl">
                     <img :src="option.imageUrl" alt="" class="">
@@ -51,9 +59,13 @@
                 </div>
               </div>
               <div class="option-section" v-if="question.type === 'MULTI_CHOICE'">
-                <div v-for='(option, index) in question.options' :key="index">
-                  <label>
-                    <input type="checkbox" :disabled="readOnly">&nbsp;{{option.body}}
+                <div v-for='(option, i) in question.options' :key="i">
+
+                  <input type="checkbox" :name="option.sequence" :value="option.body"
+                    v-model="responses[`${index + 1} ~ ${question.type} ~ ${question.body} ~${option.body} `]">
+                  <label :for="option.body">
+
+                    &nbsp;{{ option.body }}
                   </label>
                 </div>
               </div>
@@ -66,7 +78,7 @@
         </div>
       </div>
     </div>
-    <button type="button" class="btn btn-success btn-sm mt-3" @click="submitSurvey()">Submit</button>
+    <button type="button" class="btn btn-success btn-sm mt-3" @click="submitSurvey()">Submit Survey</button>
   </div>
 </template>
 
@@ -81,12 +93,12 @@ export default {
   data() {
     return {
       selectedQuestion: { id: null },
-      survey:{},
-       responses: [],
+      survey: {},
+      responses: [],
     };
   },
   props: ['id'],
-  components: {   },
+  components: {},
   mounted() {
     EventBus.$on('selected-question', obj => {
       window.console.log(obj);
@@ -98,9 +110,9 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    
-    getSurvey(){
-         Survey.get(this.id)
+
+    getSurvey() {
+      Survey.get(this.id)
         .then(response => {
           this.survey = response.data;
           console.log("this surveyyyyy..", response.data);
@@ -108,15 +120,55 @@ export default {
     },
     submitSurvey() {
       console.log("add to list", this.responses);
+
+      let arr = [];
+
+      var t = this.responses;
+      for (var f in t) {
+        let q = f.split("~");
+         
+        if (q[1].trim() == "MULTI_CHOICE") {
+         
+          arr.push({
+
+            answer: q[3],
+            question: q[2],
+            type: q[1],
+            questionNumber: q[0]
+          })
+
+        }
+        else if (q[1].trim() == "SINGLE_CHOICE") {
+          arr.push({
+
+            answer: q[3],
+            question: q[2],
+            type: q[1],
+            questionNumber: q[0]
+          })
+
+        }
+        else if (q[1].trim() == "TEXT") {
+          arr.push({
+
+            answer: this.responses[f],
+            question: q[2],
+            type: q[1],
+            questionNumber: q[0]
+          })
+
+        }
+
+      }
       
-       SurveyResponse.create(this.survey.title,this.$store.state.auth.user.id,this.id,this.responses)
+       SurveyResponse.create(this.survey.title,this.$store.state.auth.user.id,this.id, arr)
         .then(response => {
           console.log(response.data)
            this.$router.push('/survey/submit');
         })
-      
+
     }
-   
+
   },
 };
 </script>
@@ -128,16 +180,18 @@ $color-blue: #4c8ce4;
 $color-orange: #ff9635;
 $color-red: #f06559;
 $color-green: #48bf7a;
+
 h1,
 h2,
 h3 {
   font-weight: 200;
 }
 
-.quest-block{
-  width:100% !important;
+.quest-block {
+  width: 100% !important;
 
 }
+
 .wid300 {
   max-width: 300px !important;
 }
@@ -193,6 +247,7 @@ h3 {
   height: 29px;
   margin-bottom: 50px;
 }
+
 button {
   cursor: pointer;
 }
@@ -225,9 +280,11 @@ button {
   color: #ff4848;
   padding-bottom: 5px;
 }
+
 .readonly {
   background: #f7f7f7;
 }
+
 .btn-disabled {
   color: white;
   background-color: #c6c2c2;
@@ -246,10 +303,12 @@ button {
 .pad-left50 {
   padding-left: 50px;
 }
+
 .branching_section {
   background-color: #f5f8fa;
   border: solid 1px #d3dfe4;
   padding: 5px 10px;
+
   .branching_image {
     max-width: 120px;
     max-height: 120px;
@@ -257,6 +316,7 @@ button {
     border: 1px solid #ccc;
   }
 }
+
 .custom-btn-bg {
   background: linear-gradient(to left, #4b6fe6, #00baf9);
   color: #fff;
@@ -285,9 +345,11 @@ input {
   color: #555;
   font-size: 16px;
 }
+
 p {
   margin: 8px 0;
 }
+
 .radio-option {
   margin: 0px;
 }
@@ -343,9 +405,11 @@ label {
 .modal-dialog {
   width: 500px !important;
 }
+
 .width-90 {
   width: 90% !important;
 }
+
 .sb-btn-link {
   border: none;
   background: none;
@@ -354,18 +418,23 @@ label {
   font-size: 14px;
   margin-top: 16px;
 }
+
 .color-blue {
   color: $color-blue;
 }
+
 .color-orange {
   color: $color-orange;
 }
+
 .color-red {
   color: $color-red;
 }
+
 .color-green {
   color: $color-green;
 }
+
 .slidecontainer {
   width: 100%;
 }
@@ -401,7 +470,7 @@ label {
   cursor: pointer;
 }
 
-.container{
-    margin-top: 30px;
+.container {
+  margin-top: 30px;
 }
 </style> 
