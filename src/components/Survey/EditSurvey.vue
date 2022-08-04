@@ -88,7 +88,7 @@ export default {
     saveSurvey(){
       alert("Survey saved successfully!!");
       //todo - Save to database "survey table"
-      Survey.update(this.id,this.surveyname,this.questionsList, this.$store.state.auth.user.id)
+      Survey.update(this.id,this.surveyname,this.questionsList, this.$store.state.auth.user.id,this.$store.state.auth.user.username)
                 .then(response => {
                     // this.album.id = response.data.id;
                     console.log("survey created",response.data)

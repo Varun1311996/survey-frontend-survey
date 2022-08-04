@@ -132,13 +132,16 @@ export default {
     return {
       questionTypes: [
         { value: 'DEFAULT', label: '- Select a question type -' },
+         { value: 'TEXT', label: 'Text' },
+          { value: 'MULTI_CHOICE', label: 'Multiple Choice' },
         { value: 'BOOLEAN', label: 'Yes or No' },
+         { value: 'NUMBER', label: 'Number' },
         { value: 'DATE', label: 'Date' },
-        { value: 'MULTI_CHOICE', label: 'Multiple Choice' },
-        { value: 'NUMBER', label: 'Number' },
+        { value: 'SINGLE_CHOICE', label: 'Single Choice' },      
+       
         { value: 'SCALE', label: 'Scale' },
-        { value: 'SINGLE_CHOICE', label: 'Single Choice' },
-        { value: 'TEXT', label: 'Text' },
+        
+       
         { value: 'TIME', label: 'Time' },
       ],
       question: this.options,

@@ -86,9 +86,11 @@ export default {
             let urlId = window.location.pathname.split("/");
         let id = urlId[urlId.length - 1];
         console.log("aeiou",id)
+        //const emailDataExported = { "email": emailExported, "link": `http://ec2-18-191-185-134.us-east-2.compute.amazonaws.com/view/${id}`};
         const emailDataExported = { "email": emailExported, "link": `http://localhost:8081/view/${id}`};
         console.log("abcde", emailDataExported)
         //change URL here -- todo
+        //axios.post("http://ec2-18-191-185-134.us-east-2.compute.amazonaws.com/mail", emailDataExported)
         axios.post("http://localhost:8080/mail", emailDataExported)
         .then(response => {
           console.log("email response", response);
