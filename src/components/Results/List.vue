@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody v-for="(survey, index) in surveys" :key="survey.id" :survey="survey">
-                <tr>
+                <tr v-if="isAdmin">
 
                     <td>Response {{ index + 1 }}</td>
                     <td>{{ survey.createdAt.substring(0, 10) }}</td>
@@ -29,7 +29,7 @@
                     </td>
 
                 </tr>
-                <!-- <tr v-else-if="loggedUser.id == survey.userId">
+                <tr v-else-if="loggedUser.id == survey.userId">
 
                     <td>{{ survey.title }}</td>
                     <td>{{ survey.username }}</td>
@@ -43,7 +43,7 @@
 
                     </td>
 
-                </tr> -->
+                </tr>
                 <tr bgcolor="gainsboro">
 <viewDetails :id='survey.id' :show='showModal' :survey='survey'/>
                 </tr>
